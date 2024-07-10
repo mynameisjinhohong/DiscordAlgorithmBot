@@ -42,6 +42,7 @@ client.once('ready', () => {
             lastMessageId = messages.last().id;
 
             // 메시지가 1주일 이전의 것인지 확인
+
             if (messages.some(message => message.createdTimestamp <= oneWeekAgo.getTime())) {
                 break;
             }
@@ -54,7 +55,7 @@ client.once('ready', () => {
         members.forEach(memberId => {
             if (!activeMembers.has(memberId)) {
                 const member = guild.members.cache.get(memberId);
-                generalChannel.send(`<@${memberId}> 1000원 벌금`);
+                generalChannel.send(`<@${memberId}> 1000원 벌금, 3333-24-3711302 입금하도록`);
             }
         });
     });
@@ -76,7 +77,7 @@ client.on('messageCreate', async message => {
         let fetchedMessages = [];
         let lastMessageId;
         while (true) {
-            const options = { limit: 100 };
+            const options = { limit: 10 };
             if (lastMessageId) {
                 options.before = lastMessageId;
             }
