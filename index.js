@@ -9,6 +9,8 @@ const algorithmChannelId = process.env.ALGORITHM_CHANNEL_ID;
 const generalChannelId = process.env.GENERAL_CHANNEL_ID;
 const members = process.env.MEMBERS ? process.env.MEMBERS.split(',') : [];
 
+const PORT = process.env.PORT || 8000;
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -76,6 +78,6 @@ app.get('/', (req, res) => {
     res.send('Bot is running');
 });
 
-app.listen(3000, () => {
-    console.log('Server is running');
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
