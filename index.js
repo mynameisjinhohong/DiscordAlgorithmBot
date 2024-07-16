@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const express = require('express'); // express를 가져옵니다
 const app = express(); // express 애플리케이션 생성
 
-const token = process.env.DISCORD_TOKEN;
+const token = process.env.TOKEN;
 const algorithmChannelId = process.env.ALGORITHM_CHANNEL_ID;
 const generalChannelId = process.env.GENERAL_CHANNEL_ID;
 const members = process.env.MEMBERS ? process.env.MEMBERS.split(',') : [];
