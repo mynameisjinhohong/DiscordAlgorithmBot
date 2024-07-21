@@ -126,7 +126,10 @@ client.on('messageCreate', async message => {
 
         // 모든 멤버의 벌금을 출력
         const allFinesMessages = members
-            .map(memberId => `<@${memberId}> 현재 벌금: ${fines.get(memberId)}원`)
+            .map(memberId => {
+                const currentFine = fines.get(memberId) || 0; // 초기값 0 설정
+                return `<@${memberId}> 현재 벌금: ${currentFine}원`;
+            })
             .join('\n');
 
         generalChannel.send(allFinesMessages);
