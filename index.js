@@ -18,6 +18,9 @@ const client = new Client({
         GatewayIntentBits.MessageContent
     ]
 });
+// 벌금을 저장할 Map 객체
+const fines = new Map();
+
 
 client.once('ready', () => {
     console.log('Ready!');
@@ -55,9 +58,11 @@ client.once('ready', () => {
 
         // 벌금 메시지 리스트 생성
         const penaltyMessages = members
-            .filter(memberId => !activeMembers.has(memberId))
-            .map(memberId => `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`);
-
+        .filter(memberId => !activeMembers.has(memberId))
+        .map(memberId => {
+            fines.set(memberId, fines.get(memberId) + 1000); // 벌금 추가
+            return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
+        });
         // 벌금 메시지 한번에 보내기
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
@@ -114,6 +119,17 @@ client.on('messageCreate', async message => {
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
         }
+    }
+    if (message.content === '!All') {
+        const guild = client.guilds.cache.first();
+        const generalChannel = guild.channels.cache.get(generalChannelId);
+
+        // 모든 멤버의 벌금을 출력
+        const allFinesMessages = members
+            .map(memberId => `<@${memberId}> 현재 벌금: ${fines.get(memberId)}원`)
+            .join('\n');
+
+        generalChannel.send(allFinesMessages);
     }
 });
 
