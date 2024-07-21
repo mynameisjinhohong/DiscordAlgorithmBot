@@ -74,6 +74,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
+    /*
     if (message.content === '!test') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
@@ -120,6 +121,7 @@ client.on('messageCreate', async message => {
             generalChannel.send(penaltyMessages.join('\n'));
         }
     }
+    */
     if (message.content === '!All') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
