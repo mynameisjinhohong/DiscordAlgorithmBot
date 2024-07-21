@@ -7,7 +7,7 @@ const app = express(); // express 애플리케이션 생성
 const token = process.env.TOKEN;
 const algorithmChannelId = process.env.ALGORITHM_CHANNEL_ID;
 const generalChannelId = process.env.GENERAL_CHANNEL_ID;
-const members = process.env.MEMBERS ? process.env.MEMBERS.split(',') : [];
+const members = process.env.MEMBERS ? [...new Set(process.env.MEMBERS.split(','))] : []; // 중복 제거
 
 const PORT = process.env.PORT || 8000;
 
@@ -55,12 +55,15 @@ client.once('ready', () => {
         const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
 
-        members.forEach(memberId => {
-            if (!activeMembers.has(memberId)) {
-                const member = guild.members.cache.get(memberId);
-                generalChannel.send(`<@${memberId}> 1000원 벌금`);
-            }
-        });
+        // 벌금 메시지 리스트 생성
+        const penaltyMessages = members
+            .filter(memberId => !activeMembers.has(memberId))
+            .map(memberId => `<@${memberId}> 1000원 벌금`);
+
+        // 벌금 메시지 한번에 보내기
+        if (penaltyMessages.length > 0) {
+            generalChannel.send(penaltyMessages.join('\n'));
+        }
     });
 });
 
@@ -104,12 +107,15 @@ client.on('messageCreate', async message => {
         // 1주일 이내의 메시지로 필터링
         const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
-        console.log(members)
-        members.forEach(memberId => {
-            if (!activeMembers.has(memberId)) {
-                generalChannel.send(`<@${memberId}> 1000원 벌금`);
-            }
-        });
+        // 벌금 메시지 리스트 생성
+        const penaltyMessages = members
+            .filter(memberId => !activeMembers.has(memberId))
+            .map(memberId => `<@${memberId}> 1000원 벌금`);
+
+        // 벌금 메시지 한번에 보내기
+        if (penaltyMessages.length > 0) {
+            generalChannel.send(penaltyMessages.join('\n'));
+        }
     }
 });
 
