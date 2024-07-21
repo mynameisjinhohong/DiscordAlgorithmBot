@@ -104,10 +104,9 @@ client.on('messageCreate', async message => {
         // 1주일 이내의 메시지로 필터링
         const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
-
+        console.log(members)
         members.forEach(memberId => {
             if (!activeMembers.has(memberId)) {
-                const member = guild.members.cache.get(memberId);
                 generalChannel.send(`<@${memberId}> 1000원 벌금`);
             }
         });
