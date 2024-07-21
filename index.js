@@ -21,9 +21,7 @@ const client = new Client({
 
 client.once('ready', () => {
     console.log('Ready!');
-
-    // Schedule the task for every Sunday at midnight
-    schedule.scheduleJob('0 0 15 * * 0', async () => {
+    schedule.scheduleJob('0 0 15 * * 0', async () => { 
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
         const algorithmChannel = guild.channels.cache.get(algorithmChannelId);
@@ -68,10 +66,6 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
-    if (message.channel.id === algorithmChannelId) {
-        // 메시지 작성자 ID를 저장
-        algorithmMessages.add(message.author.id);
-    }
     if (message.content === '!test') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
@@ -107,6 +101,7 @@ client.on('messageCreate', async message => {
         // 1주일 이내의 메시지로 필터링
         const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
+        
         // 벌금 메시지 리스트 생성
         const penaltyMessages = members
             .filter(memberId => !activeMembers.has(memberId))
