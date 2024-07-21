@@ -62,6 +62,9 @@ client.once('ready', () => {
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
         }
+        else{
+            generalChannel.send('이번주는 다들 문제를 풀었습니다. 다들 고생하셨어요');
+        }
     });
 });
 
