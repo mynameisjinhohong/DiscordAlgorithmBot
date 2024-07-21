@@ -19,11 +19,12 @@ const client = new Client({
     ]
 });
 // 벌금을 저장할 Map 객체
-const fines = new Map();
+const fines = {};
 
 
 client.once('ready', () => {
     console.log('Ready!');
+    members.forEach(memberId => fines[memberId] = 0);
     schedule.scheduleJob('0 0 15 * * 0', async () => { 
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
@@ -60,7 +61,10 @@ client.once('ready', () => {
         const penaltyMessages = members
         .filter(memberId => !activeMembers.has(memberId))
         .map(memberId => {
-            fines.set(memberId, fines.get(memberId) + 1000); // 벌금 추가
+            if (!fines[memberId]) {
+                fines[memberId] = 0;
+            }
+            fines[memberId] += 1000; // 벌금 추가
             return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
         });
         // 벌금 메시지 한번에 보내기
@@ -129,8 +133,10 @@ client.on('messageCreate', async message => {
         // 모든 멤버의 벌금을 출력
         const allFinesMessages = members
             .map(memberId => {
-                const currentFine = fines.get(memberId) || 0; // 초기값 0 설정
-                return `<@${memberId}> 현재 벌금: ${currentFine}원`;
+                if (!fines[memberId]) {
+                    fines[memberId] = 0;
+                }
+                return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
             })
             .join('\n');
 
