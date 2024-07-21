@@ -56,7 +56,7 @@ client.once('ready', () => {
         // 벌금 메시지 리스트 생성
         const penaltyMessages = members
             .filter(memberId => !activeMembers.has(memberId))
-            .map(memberId => `<@${memberId}> 1000원 벌금`);
+            .map(memberId => `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`);
 
         // 벌금 메시지 한번에 보내기
         if (penaltyMessages.length > 0) {
