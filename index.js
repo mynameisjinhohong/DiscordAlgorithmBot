@@ -78,7 +78,6 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
-    /*
     if (message.content === '!test') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
@@ -117,15 +116,20 @@ client.on('messageCreate', async message => {
         
         // 벌금 메시지 리스트 생성
         const penaltyMessages = members
-            .filter(memberId => !activeMembers.has(memberId))
-            .map(memberId => `<@${memberId}> 1000원 벌금`);
+        .filter(memberId => !activeMembers.has(memberId))
+        .map(memberId => {
+            if (!fines[memberId]) {
+                fines[memberId] = 0;
+            }
+            fines[memberId] += 1000; // 벌금 추가
+            return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
+        });
 
         // 벌금 메시지 한번에 보내기
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
         }
     }
-    */
     if (message.content === '!All') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
