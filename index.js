@@ -23,7 +23,7 @@ client.once('ready', () => {
     console.log('Ready!');
 
     // Schedule the task for every Sunday at midnight
-    schedule.scheduleJob('00 15 * * 0', async () => {
+    schedule.scheduleJob('0 0 15 * * 0', async () => {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
         const algorithmChannel = guild.channels.cache.get(algorithmChannelId);
