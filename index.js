@@ -165,7 +165,7 @@ client.on('messageCreate', async message => {
                 return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
             })
             .join('\n');
-
+            console.log(fines);
         generalChannel.send(allFinesMessages);
     }
 });
