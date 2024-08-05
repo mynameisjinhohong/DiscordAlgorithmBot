@@ -1,4 +1,6 @@
 // Require the necessary discord.js classes
+const fs = require('fs');
+const path = require('path');  // 이 부분을 추가합니다.
 const { Client, GatewayIntentBits } = require('discord.js');
 const schedule = require('node-schedule');
 const express = require('express'); // express를 가져옵니다
