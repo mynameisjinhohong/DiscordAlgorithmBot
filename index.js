@@ -43,7 +43,6 @@ let fines = loadFines();
 
 client.once('ready', () => {
     console.log('Ready!');
-    members.forEach(memberId => fines[memberId] = 0);
     schedule.scheduleJob('0 0 15 * * 0', async () => { 
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
