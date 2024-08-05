@@ -19,8 +19,25 @@ const client = new Client({
     ]
 });
 // 벌금을 저장할 Map 객체
-const fines = {};
+const finesFilePath = path.join(__dirname, 'fines.json');
+// 파일에서 벌금 데이터를 읽어옵니다.
+const loadFines = () => {
+    if (fs.existsSync(finesFilePath)) {
+        const data = fs.readFileSync(finesFilePath, 'utf8');
+        return JSON.parse(data);
+    } else {
+        const initialFines = {};
+        members.forEach(memberId => initialFines[memberId] = 0);
+        return initialFines;
+    }
+};
+// 벌금 데이터를 파일에 저장합니다.
+const saveFines = (fines) => {
+    fs.writeFileSync(finesFilePath, JSON.stringify(fines, null, 2));
+};
 
+// 초기화할 때 벌금 데이터를 로드합니다.
+let fines = loadFines();
 
 client.once('ready', () => {
     console.log('Ready!');
@@ -67,6 +84,7 @@ client.once('ready', () => {
             fines[memberId] += 1000; // 벌금 추가
             return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
         });
+        saveFines(fines);
         // 벌금 메시지 한번에 보내기
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
