@@ -11,7 +11,7 @@ const algorithmChannelId = process.env.ALGORITHM_CHANNEL_ID;
 const generalChannelId = process.env.GENERAL_CHANNEL_ID;
 const members = process.env.MEMBERS ? [...new Set(process.env.MEMBERS.split(','))] : []; // 중복 제거
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000;  
 
 const client = new Client({
     intents: [
