@@ -167,25 +167,32 @@ client.on('messageCreate', async message => {
             console.log(fines);
         generalChannel.send(allFinesMessages);
     }
-    if(message.content.indexOf('!정상화') === 0 && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')){
-        var regex = /[^0-9]/g;
-        var target = message.content.replace(regex,"");
-        const allFinesMessages = members
-        .map(memberId => {
-            if (!fines[memberId]) {
-                fines[memberId] = 0;
-            }
-            if(target === memberId){
-                fines[memberId] = 0
-            }
-            return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
-        })
-        .join('\n');
-        console.log(message.content);
-        console.log(target);
-        generalChannel.send(allFinesMessages);
-        saveFines(fines);
+    if (message.content.indexOf('!정상화') === 0 && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
+        // 멘션된 사용자의 ID 추출
+        const targetId = message.mentions.users.first()?.id;
+    
+        if (targetId) {
+            const allFinesMessages = members
+                .map(memberId => {
+                    if (!fines[memberId]) {
+                        fines[memberId] = 0;
+                    }
+                    if (targetId === memberId) {
+                        fines[memberId] = 0;  // 벌금 초기화
+                    }
+                    return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
+                })
+                .join('\n');
+    
+            console.log(message.content);
+            console.log(targetId);
+            generalChannel.send(allFinesMessages);
+            saveFines(fines);
+        } else {
+            generalChannel.send("유효한 멘션을 제공해주세요.");
+        }
     }
+    
 });
 
 client.login(token);
