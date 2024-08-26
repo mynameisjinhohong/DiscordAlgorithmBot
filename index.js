@@ -167,17 +167,21 @@ client.on('messageCreate', async message => {
             console.log(fines);
         generalChannel.send(allFinesMessages);
     }
-    if(message.content === '!정상화' && (message.memberId == '382878217972744193' || message.memberId == '993493682810527814')){
+    if(message.content.indexOf('!정상화') && (message.memberId == '382878217972744193' || message.memberId == '993493682810527814')){
+        target = message.content.split()[1].replace('@','')
         const allFinesMessages = members
         .map(memberId => {
             if (!fines[memberId]) {
                 fines[memberId] = 0;
             }
-            fines[memberId] = 0
+            if(target === memberId){
+                fines[memberId] = 0
+            }
             return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
         })
         .join('\n');
         console.log(message.content);
+        console.log(target);
         generalChannel.send(allFinesMessages);
         saveFines(fines);
     }
