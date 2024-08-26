@@ -167,10 +167,9 @@ client.on('messageCreate', async message => {
             console.log(fines);
         generalChannel.send(allFinesMessages);
     }
-    console.log(message.content.indexOf("!정상화"));
-    console.log(message);
-    if(message.content.indexOf('!정상화') === 0 && (message.memberId == '382878217972744193' || message.memberId == '993493682810527814')){
-        target = message.content.split()[1].replace('@','')
+    if(message.content.indexOf('!정상화') === 0 && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')){
+        var regex = /[^0-9]/g;
+        var target = message.content.replace(regex,"");
         const allFinesMessages = members
         .map(memberId => {
             if (!fines[memberId]) {
