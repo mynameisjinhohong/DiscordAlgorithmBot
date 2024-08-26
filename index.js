@@ -170,7 +170,8 @@ client.on('messageCreate', async message => {
     if (message.content.indexOf('!정상화') === 0 && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
         // 멘션된 사용자의 ID 추출
         const targetId = message.mentions.users.first()?.id;
-    
+        const guild = client.guilds.cache.first();
+        const generalChannel = guild.channels.cache.get(generalChannelId);
         if (targetId) {
             const allFinesMessages = members
                 .map(memberId => {
