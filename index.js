@@ -168,8 +168,8 @@ client.on('messageCreate', async message => {
         generalChannel.send(allFinesMessages);
     }
     console.log(message.content.indexOf("!정상화"));
-    console.log(message.memberId);
-    if(message.content.indexOf('!정상화') && (message.memberId == '382878217972744193' || message.memberId == '993493682810527814')){
+    console.log(message);
+    if(message.content.indexOf('!정상화') === 0 && (message.memberId == '382878217972744193' || message.memberId == '993493682810527814')){
         target = message.content.split()[1].replace('@','')
         const allFinesMessages = members
         .map(memberId => {
