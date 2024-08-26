@@ -188,8 +188,6 @@ client.on('messageCreate', async message => {
             console.log(targetId);
             generalChannel.send(allFinesMessages);
             saveFines(fines);
-        } else {
-            generalChannel.send("유효한 멘션을 제공해주세요.");
         }
     }
     
