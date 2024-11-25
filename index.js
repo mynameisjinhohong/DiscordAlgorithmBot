@@ -43,13 +43,24 @@ let fines = loadFines();
 
 client.once('ready', () => {
     console.log('Ready!');
-    schedule.scheduleJob('0 0 15 * * 0', async () => { 
+    const KST_OFFSET = 9 * 60 * 60 * 1000; // UTC+9
+
+    schedule.scheduleJob('0 0 15 * * 0', async () => { // UTC 기준 일요일 오후 3시 실행
+        const now = new Date();
+        // 한국 시간으로 변환된 현재 시간
+        const nowKST = new Date(now.getTime() + KST_OFFSET);
+
+        // 한국 시간 기준 자정으로 계산된 1주일 전
+        const oneWeekAgoKST = new Date(
+            nowKST.getFullYear(),
+            nowKST.getMonth(),
+            nowKST.getDate() - 7, // 7일 전
+            0, 0, 0, 0 // 자정
+        );
+
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
         const algorithmChannel = guild.channels.cache.get(algorithmChannelId);
-
-        const now = new Date();
-        const oneWeekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
 
         let fetchedMessages = [];
         let lastMessageId;
@@ -67,47 +78,55 @@ client.once('ready', () => {
             fetchedMessages = fetchedMessages.concat(Array.from(messages.values()));
             lastMessageId = messages.last().id;
 
-            if (messages.some(message => message.createdTimestamp <= oneWeekAgo.getTime())) {
+            // UTC 메시지 타임스탬프를 KST로 변환 후 비교
+            if (messages.some(message => message.createdTimestamp + KST_OFFSET <= oneWeekAgoKST.getTime())) {
                 break;
             }
         }
 
-        const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
+        // UTC 메시지 타임스탬프를 KST로 변환 후 필터링
+        const oneWeekMessages = fetchedMessages.filter(
+            message => message.createdTimestamp + KST_OFFSET > oneWeekAgoKST.getTime()
+        );
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
 
-        // 벌금 메시지 리스트 생성
         const penaltyMessages = members
-        .filter(memberId => !activeMembers.has(memberId))
-        .map(memberId => {
-            if (!fines[memberId]) {
-                fines[memberId] = 0;
-            }
-            fines[memberId] += 1000; // 벌금 추가
-            return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
-        });
+            .filter(memberId => !activeMembers.has(memberId))
+            .map(memberId => {
+                if (!fines[memberId]) {
+                    fines[memberId] = 0;
+                }
+                fines[memberId] += 1000;
+                return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
+            });
+
         saveFines(fines);
-        // 벌금 메시지 한번에 보내기
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
-        }
-        else{
+        } else {
             generalChannel.send('이번주는 다들 문제를 풀었습니다. 다들 수고하셨습니다');
         }
     });
 });
 
 client.on('messageCreate', async message => {
-    /*
-    if (message.content === '!test') {
+    if (message.content === '!test'&& (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
+        const now = new Date();
+        // 한국 시간으로 변환된 현재 시간
+        const nowKST = new Date(now.getTime() + KST_OFFSET);
+
+        // 한국 시간 기준 자정으로 계산된 1주일 전
+        const oneWeekAgoKST = new Date(
+            nowKST.getFullYear(),
+            nowKST.getMonth(),
+            nowKST.getDate() - 7, // 7일 전
+            0, 0, 0, 0 // 자정
+        );
+
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
         const algorithmChannel = guild.channels.cache.get(algorithmChannelId);
 
-        // 현재 시간과 1주일 전 시간 계산
-        const now = new Date();
-        const oneWeekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
-
-        // 알고리즘 채널의 메시지를 페치하고 1주일 이내의 메시지를 확인
         let fetchedMessages = [];
         let lastMessageId;
         while (true) {
@@ -122,35 +141,39 @@ client.on('messageCreate', async message => {
             }
 
             fetchedMessages = fetchedMessages.concat(Array.from(messages.values()));
+            console.log(fetchedMessages.createdTimestamp + KST_OFFSET)
             lastMessageId = messages.last().id;
 
-            // 메시지가 1주일 이전의 것인지 확인
-            if (messages.some(message => message.createdTimestamp <= oneWeekAgo.getTime())) {
+            // UTC 메시지 타임스탬프를 KST로 변환 후 비교
+            if (messages.some(message => message.createdTimestamp + KST_OFFSET <= oneWeekAgoKST.getTime())) {
                 break;
             }
         }
 
-        // 1주일 이내의 메시지로 필터링
-        const oneWeekMessages = fetchedMessages.filter(message => message.createdTimestamp > oneWeekAgo.getTime());
+        // UTC 메시지 타임스탬프를 KST로 변환 후 필터링
+        const oneWeekMessages = fetchedMessages.filter(
+            message => message.createdTimestamp + KST_OFFSET > oneWeekAgoKST.getTime()
+        );
         const activeMembers = new Set(oneWeekMessages.map(message => message.author.id));
         
-        // 벌금 메시지 리스트 생성
-        const penaltyMessages = members
-        .filter(memberId => !activeMembers.has(memberId))
-        .map(memberId => {
-            if (!fines[memberId]) {
-                fines[memberId] = 0;
-            }
-            fines[memberId] += 1000; // 벌금 추가
-            return `<@${memberId}> 1000원 벌금`;
-        });
 
-        // 벌금 메시지 한번에 보내기
+        const penaltyMessages = members
+            .filter(memberId => !activeMembers.has(memberId))
+            .map(memberId => {
+                if (!fines[memberId]) {
+                    fines[memberId] = 0;
+                }
+                fines[memberId] += 1000;
+                return `<@${memberId}> 1000원 벌금,3333-24-3711302 입금하시면 됩니다.`;
+            });
+
+        saveFines(fines);
         if (penaltyMessages.length > 0) {
             generalChannel.send(penaltyMessages.join('\n'));
+        } else {
+            generalChannel.send('이번주는 다들 문제를 풀었습니다. 다들 수고하셨습니다');
         }
     }
-    */
     if (message.content === '!All') {
         const guild = client.guilds.cache.first();
         const generalChannel = guild.channels.cache.get(generalChannelId);
