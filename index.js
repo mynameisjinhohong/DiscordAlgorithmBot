@@ -76,7 +76,10 @@ client.once('ready', () => {
 
             fetchedMessages = fetchedMessages.concat(Array.from(messages.values()));
             lastMessageId = messages.last().id;
-
+            messages.forEach(msg => {
+                const createdAtKST = new Date(msg.createdTimestamp);
+                console.log(`Message: "${msg.content}" | Created At: ${createdAtKST}`);
+            });
             // UTC 메시지 타임스탬프를 KST로 변환 후 비교
             if (messages.some(message => message.createdTimestamp + KST_OFFSET <= oneWeekAgoKST.getTime())) {
                 break;
@@ -186,7 +189,6 @@ client.on('messageCreate', async message => {
                 return `<@${memberId}> 현재 벌금: ${fines[memberId]}원`;
             })
             .join('\n');
-            console.log(fines);
         generalChannel.send(allFinesMessages);
     }
     if (message.content.indexOf('!정상화') === 0 && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
@@ -207,8 +209,6 @@ client.on('messageCreate', async message => {
                 })
                 .join('\n');
     
-            console.log(message.content);
-            console.log(targetId);
             generalChannel.send(allFinesMessages);
             saveFines(fines);
         }
