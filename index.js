@@ -10,7 +10,7 @@ const token = process.env.TOKEN;
 const algorithmChannelId = process.env.ALGORITHM_CHANNEL_ID;
 const generalChannelId = process.env.GENERAL_CHANNEL_ID;
 const members = process.env.MEMBERS ? [...new Set(process.env.MEMBERS.split(','))] : []; // 중복 제거
-
+const KST_OFFSET = 9 * 60 * 60 * 1000;
 const PORT = process.env.PORT || 8000;  
 
 const client = new Client({
@@ -43,7 +43,6 @@ let fines = loadFines();
 
 client.once('ready', () => {
     console.log('Ready!');
-    const KST_OFFSET = 9 * 60 * 60 * 1000; // UTC+9
 
     schedule.scheduleJob('0 0 15 * * 0', async () => { // UTC 기준 일요일 오후 3시 실행
         const now = new Date();
@@ -110,7 +109,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
-    if (message.content === '!test'&& (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
+    if (message.content === '!test' && (message.author.id == '382878217972744193' || message.author.id == '993493682810527814')) {
         const now = new Date();
         // 한국 시간으로 변환된 현재 시간
         const nowKST = new Date(now.getTime() + KST_OFFSET);
