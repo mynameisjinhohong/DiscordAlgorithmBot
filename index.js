@@ -143,9 +143,11 @@ client.on('messageCreate', async message => {
             }
 
             fetchedMessages = fetchedMessages.concat(Array.from(messages.values()));
-            console.log(fetchedMessages.createdTimestamp + KST_OFFSET)
             lastMessageId = messages.last().id;
-
+            messages.forEach(msg => {
+                const createdAtKST = new Date(msg.createdTimestamp);
+                console.log(`Message: "${msg.content}" | Created At: ${createdAtKST}`);
+            });
             // UTC 메시지 타임스탬프를 KST로 변환 후 비교
             if (messages.some(message => message.createdTimestamp + KST_OFFSET <= oneWeekAgoKST.getTime())) {
                 break;
