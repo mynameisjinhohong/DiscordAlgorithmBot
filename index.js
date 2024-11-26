@@ -42,7 +42,7 @@ const saveFines = (fines) => {
 let fines = loadFines();
 
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log(`KST_OFFSET: ${KST_OFFSET}`);
 
     schedule.scheduleJob('0 0 15 * * 0', async () => { // UTC 기준 일요일 오후 3시 실행
         const now = new Date();
